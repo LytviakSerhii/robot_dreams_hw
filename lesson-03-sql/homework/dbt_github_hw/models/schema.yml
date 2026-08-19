@@ -19,7 +19,8 @@ models:
       - name: type_rank
         tests:
           - accepted_values:
-              values: [1, 2, 3, 4, 5]
+              arguments:
+                values: [1, 2, 3, 4, 5]
 
   - name: daily_activity
     description: "Кількість подій по днях + накопичувальний підсумок."
