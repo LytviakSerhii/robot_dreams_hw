@@ -12,3 +12,4 @@ from read_parquet('{{ var("events_path") }}', hive_partitioning = true)
 WHERE event_type in ('PushEvent', 'IssuesEvent', 'PullRequestEvent', 'WatchEvent', 'IssueCommentEvent') AND
     actor_login NOT LIKE '%[bot]' AND
     NOT(event_type = 'PushEvent' AND payload_commit_count = 0)
+    
