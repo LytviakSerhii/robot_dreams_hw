@@ -1,30 +1,30 @@
 with commits_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(pushed_at, 'Europe/Kyiv')) as activity_date,
+        to_date(pushed_at) as activity_date,
         count(*) as commits,
         count(distinct author_email) as distinct_committers
     from {{ ref('commits') }}
     where pushed_at is not null
-    group by repo_name, to_date(from_utc_timestamp(pushed_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(pushed_at)
 ),
 prs_opened_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(opened_at, 'Europe/Kyiv')) as activity_date,
+        to_date(opened_at) as activity_date,
         count(*) as prs_opened
     from {{ ref('pull_requests') }}
     where opened_at is not null
-    group by repo_name, to_date(from_utc_timestamp(opened_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(opened_at)
 ),
 prs_merged_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(merged_at, 'Europe/Kyiv')) as activity_date,
+        to_date(merged_at) as activity_date,
         count(*) as prs_merged
     from {{ ref('pull_requests') }}
     where merged_at is not null
-    group by repo_name, to_date(from_utc_timestamp(merged_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(merged_at)
 ),
 prs_daily as (
     select
@@ -40,22 +40,21 @@ prs_daily as (
 issues_opened_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(opened_at, 'Europe/Kyiv')) as activity_date,
+        to_date(opened_at) as activity_date,
         count(*) as issues_opened
     from {{ ref('issues') }}
     where opened_at is not null
-    group by repo_name, to_date(from_utc_timestamp(opened_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(opened_at)
 ),
 issues_closed_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(closed_at, 'Europe/Kyiv')) as activity_date,
+        to_date(closed_at) as activity_date,
         count(*) as issues_closed
     from {{ ref('issues') }}
     where closed_at is not null
-    group by repo_name, to_date(from_utc_timestamp(closed_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(closed_at)
 ),
-
 issues_daily as (
     select
         coalesce(o.repo_name, c.repo_name) as repo_name,
@@ -67,19 +66,17 @@ issues_daily as (
         on o.repo_name = c.repo_name
        and o.activity_date = c.activity_date
 ),
-
 events_daily as (
     select
         repo_name,
-        to_date(from_utc_timestamp(created_at, 'Europe/Kyiv')) as activity_date,
+        to_date(created_at) as activity_date,
         count(case when event_type = 'WatchEvent' then 1 end) as stars,
         count(case when event_type = 'ForkEvent' then 1 end) as forks
     from {{ ref('events') }}
     where event_type in ('WatchEvent', 'ForkEvent')
       and created_at is not null
-    group by repo_name, to_date(from_utc_timestamp(created_at, 'Europe/Kyiv'))
+    group by repo_name, to_date(created_at)
 ),
-
 joined as (
     select
         repo_name,
@@ -107,9 +104,8 @@ joined as (
     )
     group by repo_name, activity_date
 )
-
 select
-    md5(concat_ws('|', md5(repo_name), cast(date_format(activity_date, 'yyyyMMdd') as string))) as activity_id,
+    md5(concat_ws('|', md5(repo_name), cast(date_format(activity_date, 'yyyyMMdd') as int))) as activity_id,
     md5(repo_name) as repo_id,
     cast(date_format(activity_date, 'yyyyMMdd') as int) as date_id,
     commits,
