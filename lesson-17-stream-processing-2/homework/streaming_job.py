@@ -123,11 +123,6 @@ def write_windows(spark: SparkSession) -> None:
 
 
 def build_summary(spark: SparkSession) -> dict:
-    """
-    Завдання 6 (15 балів). Serving layer: прочитайте OUTPUT батчем і складіть зведення:
-      {"total_events": int, "n_windows": int, "window_seconds": 30, "by_type": {type: int}}
-    Запишіть його у SUMMARY (json, indent=2, sort_keys=True) і поверніть як dict.
-    """
     df = spark.read.parquet(OUTPUT)
     
     total_events = int(df.select(F.sum("event_count")).collect()[0][0] or 0)
