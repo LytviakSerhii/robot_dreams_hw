@@ -14,3 +14,24 @@
 # Скрипт app/gh_ingest.py — ДАНО, не редагуйте його.
 
 # TODO: реалізуйте Dockerfile тут.
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY app/requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/gh_ingest.py .
+
+RUN useradd --create-home --uid 1000 appuser && \
+    mkdir /cache && \
+    chown -R appuser:appuser /app /cache
+
+USER appuser
+
+HEALTHCHECK CMD python -c "import psycopg; print('ok')"
+
+ENTRYPOINT ["python", "/app/gh_ingest.py"]
