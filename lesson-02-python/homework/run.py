@@ -1,13 +1,3 @@
-"""Orchestrator — runs the whole pipeline landing -> bronze -> silver -> gold.
-
-Run from the homework directory:
-
-    uv run python run.py
-
-Each stage writes its artifact under homework/data/. Re-running is safe: the
-landing download is skipped if present and every table is overwritten.
-"""
-
 from __future__ import annotations
 
 from pipeline import bronze, gold, landing, silver

@@ -1,10 +1,3 @@
-"""Landing stage — idempotent download of the raw hour into the landing zone.
-
-This module is GIVEN. You do not need to change it. It mirrors the lesson's
-"landing zone" idea: the raw file is immutable, so a repeat run that finds the
-file already present skips the download.
-"""
-
 from __future__ import annotations
 
 import os
