@@ -7,7 +7,7 @@
 # consumer.py, and runs pytest (offline unit tests + the stats.json checkpoint).
 set -uo pipefail
 cd "$(dirname "$0")"
-RUN="uv run"
+RUN="uv run --no-sync"
 
 echo "==> [1/5] Starting Kafka broker"
 docker compose up -d >/dev/null
